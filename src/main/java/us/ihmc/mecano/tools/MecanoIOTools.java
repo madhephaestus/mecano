@@ -1,6 +1,8 @@
 package us.ihmc.mecano.tools;
 
-import static us.ihmc.euclid.tools.EuclidCoreIOTools.*;
+import static us.ihmc.euclid.tools.EuclidCoreIOTools.DEFAULT_FORMAT;
+import static us.ihmc.euclid.tools.EuclidCoreIOTools.getStringOf;
+import static us.ihmc.euclid.tools.EuclidCoreIOTools.getTuple3DString;
 
 import org.ejml.data.DenseMatrix64F;
 
@@ -11,6 +13,7 @@ import us.ihmc.euclid.tuple3D.interfaces.Vector3DReadOnly;
 import us.ihmc.mecano.spatial.interfaces.MomentumReadOnly;
 import us.ihmc.mecano.spatial.interfaces.SpatialAccelerationReadOnly;
 import us.ihmc.mecano.spatial.interfaces.SpatialForceReadOnly;
+import us.ihmc.mecano.spatial.interfaces.SpatialImpulseReadOnly;
 import us.ihmc.mecano.spatial.interfaces.SpatialInertiaReadOnly;
 import us.ihmc.mecano.spatial.interfaces.SpatialVectorReadOnly;
 import us.ihmc.mecano.spatial.interfaces.TwistReadOnly;
@@ -141,10 +144,10 @@ public class MecanoIOTools
     *
     * @param format the format to use for each number.
     * @param expressedInFrame the reference frame in which the spatial force vector is expressed.
-    * @param angularPart the angular part of the spatial force vector to get the {@code String} of.
-    *           Not modified.
-    * @param linearPart the linear part of the spatial force vector to get the {@code String} of.
-    *           Not modified.
+    * @param angularPart the angular part of the spatial force vector to get the {@code String} of. Not
+    *           modified.
+    * @param linearPart the linear part of the spatial force vector to get the {@code String} of. Not
+    *           modified.
     * @return the representative {@code String}.
     */
    public static String getSpatialForceVectorString(String format, ReferenceFrame expressedInFrame, Vector3DReadOnly angularPart, Vector3DReadOnly linearPart)
@@ -213,6 +216,27 @@ public class MecanoIOTools
    {
       return "Wrench exerted on " + bodyFrame + ": [angular = " + getTuple3DString(format, angularPart) + ", linear = " + getTuple3DString(format, linearPart)
             + "] - " + expressedInFrame;
+   }
+
+   public static String getSpatialImpulseString(SpatialImpulseReadOnly spatialImpulse)
+   {
+      return getSpatialImpulseString(DEFAULT_FORMAT, spatialImpulse);
+   }
+
+   public static String getSpatialImpulseString(String format, SpatialImpulseReadOnly spatialImpulse)
+   {
+      if (spatialImpulse == null)
+         return "null";
+      else
+         return getSpatialImpulseString(format, spatialImpulse.getBodyFrame(), spatialImpulse.getReferenceFrame(), spatialImpulse.getAngularPart(),
+                                        spatialImpulse.getLinearPart());
+   }
+
+   public static String getSpatialImpulseString(String format, ReferenceFrame bodyFrame, ReferenceFrame expressedInFrame, Vector3DReadOnly angularPart,
+                                                Vector3DReadOnly linearPart)
+   {
+      return "Spatial impulse exerted on " + bodyFrame + ": [angular = " + getTuple3DString(format, angularPart) + ", linear = "
+            + getTuple3DString(format, linearPart) + "] - " + expressedInFrame;
    }
 
    /**
@@ -333,10 +357,10 @@ public class MecanoIOTools
     * @param bodyFrame what we are specifying the acceleration of.
     * @param baseFrame with respect to what we are specifying the acceleration.
     * @param expressedInFrame in which reference frame the acceleration is expressed.
-    * @param angularPart the angular part of the spatial acceleration to get the {@code String} of.
-    *           Not modified.
-    * @param linearPart the linear part of the spatial acceleration to get the {@code String} of.
-    *           Not modified.
+    * @param angularPart the angular part of the spatial acceleration to get the {@code String} of. Not
+    *           modified.
+    * @param linearPart the linear part of the spatial acceleration to get the {@code String} of. Not
+    *           modified.
     * @return the representative {@code String}.
     */
    public static String getSpatialAccelerationString(String format, ReferenceFrame bodyFrame, ReferenceFrame baseFrame, ReferenceFrame expressedInFrame,
@@ -398,8 +422,7 @@ public class MecanoIOTools
     * @param expressedInFrame the reference frame in which the momentum is expressed.
     * @param angularMomentum the angular part of the momentum to get the {@code String} of. Not
     *           modified.
-    * @param linearMomentum the linear part of the momentum to get the {@code String} of. Not
-    *           modified.
+    * @param linearMomentum the linear part of the momentum to get the {@code String} of. Not modified.
     * @return the representative {@code String}.
     */
    public static String getMomentumString(String format, ReferenceFrame expressedInFrame, Vector3DReadOnly angularMomentum, Vector3DReadOnly linearMomentum)
@@ -430,8 +453,8 @@ public class MecanoIOTools
    }
 
    /**
-    * Gets a representative {@code String} of {@code spatialInertiaMatrix} given a specific format
-    * to use.
+    * Gets a representative {@code String} of {@code spatialInertiaMatrix} given a specific format to
+    * use.
     * <p>
     * Using the default format {@link #DEFAULT_FORMAT}, this provides a {@code String} as follows:
     *
@@ -483,8 +506,7 @@ public class MecanoIOTools
     * @param bodyFrame what we are specifying the inertia of.
     * @param expressedInFrame the reference frame in which the inertia is expressed.
     * @param mass the mass part of the spatial inertia.
-    * @param centerOfMassOffset the offset from the frame's origin of the center of mass. Not
-    *           modified.
+    * @param centerOfMassOffset the offset from the frame's origin of the center of mass. Not modified.
     * @param massMomentOfInertia the mass moment of inertia part. Not modified.
     * @return the representative {@code String}.
     */

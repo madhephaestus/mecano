@@ -35,6 +35,7 @@ import us.ihmc.mecano.spatial.interfaces.FixedFrameSpatialAccelerationBasics;
 import us.ihmc.mecano.spatial.interfaces.FixedFrameTwistBasics;
 import us.ihmc.mecano.spatial.interfaces.FixedFrameWrenchBasics;
 import us.ihmc.mecano.spatial.interfaces.SpatialAccelerationReadOnly;
+import us.ihmc.mecano.spatial.interfaces.SpatialImpulseReadOnly;
 import us.ihmc.mecano.spatial.interfaces.TwistReadOnly;
 import us.ihmc.mecano.spatial.interfaces.WrenchReadOnly;
 
@@ -668,7 +669,7 @@ public class MecanoFactories
     * @return the new twist linked to the two vectors.
     */
    public static TwistReadOnly newTwistReadOnly(ReferenceFrame bodyFrame, ReferenceFrame baseFrame, FrameVector3DReadOnly angularPart,
-         FrameVector3DReadOnly linearPart)
+                                                FrameVector3DReadOnly linearPart)
    {
       angularPart.checkReferenceFrameMatch(linearPart);
 
@@ -783,7 +784,7 @@ public class MecanoFactories
     * @return the new acceleration linked to the {@code referenceAcceleration}.
     */
    public static SpatialAccelerationReadOnly newSpatialAccelerationVectorReadOnly(DoubleSupplier scaleSupplier,
-         SpatialAccelerationReadOnly referenceAcceleration)
+                                                                                  SpatialAccelerationReadOnly referenceAcceleration)
    {
       return new SpatialAccelerationReadOnly()
       {
@@ -839,7 +840,7 @@ public class MecanoFactories
     * @return the new acceleration linked to the two vectors.
     */
    public static SpatialAccelerationReadOnly newSpatialAccelerationVectorReadOnly(ReferenceFrame bodyFrame, ReferenceFrame baseFrame,
-         FrameVector3DReadOnly angularPart, FrameVector3DReadOnly linearPart)
+                                                                                  FrameVector3DReadOnly angularPart, FrameVector3DReadOnly linearPart)
    {
       angularPart.checkReferenceFrameMatch(linearPart);
 
@@ -896,7 +897,7 @@ public class MecanoFactories
     * @return the new acceleration.
     */
    public static FixedFrameSpatialAccelerationBasics newPlanarFixedFrameSpatialAccelerationVectorBasics(ReferenceFrame bodyFrame, ReferenceFrame baseFrame,
-         ReferenceFrame expressedInFrame)
+                                                                                                        ReferenceFrame expressedInFrame)
    {
       return new FixedFrameSpatialAccelerationBasics()
       {
@@ -1036,6 +1037,45 @@ public class MecanoFactories
          public String toString()
          {
             return MecanoIOTools.getWrenchString(this);
+         }
+      };
+   }
+
+   public static SpatialImpulseReadOnly newSpatialImpulseReadOnly(DoubleSupplier scaleSupplier, SpatialImpulseReadOnly referenceSpatialImpulse)
+   {
+      return new SpatialImpulseReadOnly()
+      {
+         private final FrameVector3DReadOnly angularPart = newFrameVector3DReadOnly(scaleSupplier, referenceSpatialImpulse.getAngularPart());
+         private final FrameVector3DReadOnly linearPart = newFrameVector3DReadOnly(scaleSupplier, referenceSpatialImpulse.getLinearPart());
+
+         @Override
+         public ReferenceFrame getBodyFrame()
+         {
+            return referenceSpatialImpulse.getBodyFrame();
+         }
+
+         @Override
+         public ReferenceFrame getReferenceFrame()
+         {
+            return referenceSpatialImpulse.getReferenceFrame();
+         }
+
+         @Override
+         public FrameVector3DReadOnly getAngularPart()
+         {
+            return angularPart;
+         }
+
+         @Override
+         public FrameVector3DReadOnly getLinearPart()
+         {
+            return linearPart;
+         }
+
+         @Override
+         public String toString()
+         {
+            return MecanoIOTools.getSpatialImpulseString(this);
          }
       };
    }
